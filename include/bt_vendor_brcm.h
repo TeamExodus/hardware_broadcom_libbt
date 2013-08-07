@@ -72,6 +72,11 @@
 #define UART_TARGET_BAUD_RATE           3000000
 #endif
 
+/* Force use of two stop bits */
+#ifndef UART_FORCE_TWO_STOPBITS
+#define UART_FORCE_TWO_STOPBITS FALSE
+#endif
+
 #ifndef FW_PRE_PATCH
 #define FW_PRE_PATCH ""
 #endif
