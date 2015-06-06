@@ -107,6 +107,10 @@
       next 2 bytes are for codec type */
 #define SCO_CODEC_PARAM_SIZE                    3
 
+#ifdef SAMSUNG_BLUETOOTH
+#define CID_PATH "/data/.cid.info"
+#endif
+
 /******************************************************************************
 **  Local type definitions
 ******************************************************************************/
@@ -454,9 +458,6 @@ static char *hw_samsung_bluetooth_type()
     if (strncmp(buf, "semcosh", 7) == 0)
         return "_semcosh";
 
-    if (strncmp(buf, "wisol", 5) == 0)
-        return "_wisol";
-
     return NULL;
 }
 #endif
@@ -506,9 +507,26 @@ static uint8_t hw_config_findpatch(char *p_chip_id_str)
         while ((dp = readdir(dirp)) != NULL)
         {
             /* Check if filename starts with chip-id name */
+#ifdef SAMSUNG_BLUETOOTH
+            char *type = hw_samsung_bluetooth_type();
+            char samsung_patchfile_name[FW_PATCHFILE_PATH_MAXLEN] = { 0 };
+            memset(samsung_patchfile_name, 0, FW_PATCHFILE_PATH_MAXLEN);
+            strcpy(samsung_patchfile_name, p_chip_id_str);
+            if (type != NULL)
+            {
+                strcat(samsung_patchfile_name, type);
+            }
+
+            if ((hw_strncmp(dp->d_name, samsung_patchfile_name,
+                strlen(samsung_patchfile_name))) == 0)
+            {
+                memset(p_chip_id_str, 0, FW_PATCHFILE_PATH_MAXLEN);
+                strcpy(p_chip_id_str, samsung_patchfile_name);
+#else
             if ((hw_strncmp(dp->d_name, p_chip_id_str, strlen(p_chip_id_str)) \
                 ) == 0)
             {
+#endif
                 /* Check if it has .hcd extenstion */
                 filenamelen = strlen(dp->d_name);
                 if ((filenamelen >= FW_PATCHFILE_EXTENSION_LEN) &&
