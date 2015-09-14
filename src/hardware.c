@@ -463,6 +463,9 @@ static const char *hw_samsung_bluetooth_type()
     if (strncmp(buf, "wisol", 5) == 0)
         return "wisol";
 
+    if (strncmp(buf, "wisol", 7) == 0)
+        return "_wisol";
+
     return NULL;
 }
 #endif
