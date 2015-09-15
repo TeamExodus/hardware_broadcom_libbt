@@ -418,6 +418,49 @@ static int hw_strncmp (const char *p_str1, const char *p_str2, const int len)
     return 0;
 }
 
+#ifdef SAMSUNG_BLUETOOTH
+/*******************************************************************************
+**
+** Function         hw_samsung_bluetooth_type
+**
+** Description      Returns the type of bluetooth chip present in samsung
+**                  device.
+**
+** Returns          Returns char* (bluetooth type)
+**
+*******************************************************************************/
+static char *hw_samsung_bluetooth_type()
+{
+    char buf[10];
+    int fd = open(CID_PATH, O_RDONLY);
+    if (fd < 0) {
+        ALOGE("Couldn't open file %s for reading", CID_PATH);
+        return NULL;
+    }
+
+    if (read(fd, buf, sizeof(buf)) < 0) {
+        close(fd);
+        return NULL;
+    }
+
+    close(fd);
+
+    if (strncmp(buf, "murata", 6) == 0)
+        return "_murata";
+
+    if (strncmp(buf, "semcove", 7) == 0)
+        return "_semcove";
+
+    if (strncmp(buf, "semcosh", 7) == 0)
+        return "_semcosh";
+
+    if (strncmp(buf, "wisol", 5) == 0)
+        return "_wisol";
+
+    return NULL;
+}
+#endif
+
 /*******************************************************************************
 **
 ** Function         hw_config_findpatch
